@@ -1,7 +1,7 @@
 package Model;
 
 public class Service {
-   String id, jenis, harga, satuan, status;
+   String id, jenis, harga, status;
 
 public String getId() {
 	return id;
@@ -27,13 +27,6 @@ public void setHarga(String harga) {
 	this.harga = harga;
 }
 
-public String getSatuan() {
-	return satuan;
-}
-
-public void setSatuan(String satuan) {
-	this.satuan = satuan;
-}
 
 public String getStatus() {
 	return status;
