@@ -13,7 +13,7 @@ import config.Database;
 
 public class ServiceRepo implements ServiceDAO{
 	private Connection connection;
-	final String insert = "INSERT INTO Service (jenis, harga, satuan, status) VALUES (?,?,?);";
+	final String insert = "INSERT INTO Service (jenis, harga, status) VALUES (?,?,?);";
 	final String select = "SELECT * FROM Service;";
 	final String delete = "DELETE FROM Service WHERE id=?;";
 	final String update = "UPDATE Service SET jenis=?, harga=?, status=?, WHERE id=?;";
@@ -27,10 +27,9 @@ public class ServiceRepo implements ServiceDAO{
 		PreparedStatement st = null;
 		try {
 			st = connection.prepareStatement(insert);
-			st.setString(1, service.getId());
-			st.setString(2, service.getJenis());
-			st.setString(3, service.getHarga());
-			st.setString(4, service.getStatus());
+			st.setString(1, service.getJenis());
+			st.setString(2, service.getHarga());
+			st.setString(3, service.getStatus());
 			st.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
@@ -63,7 +62,8 @@ public class ServiceRepo implements ServiceDAO{
 		return ls;
 	}
 
-	public void update (Service service) {
+		// TODO Auto-generated method stub
+	public void update(Service service) {
 		PreparedStatement st = null;
 		try {
 			st = connection.prepareStatement(update);

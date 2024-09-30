@@ -27,10 +27,9 @@ public class CustomersRepo implements CustomersDAO{
 		PreparedStatement st = null;
 		try {
 			st = connection.prepareStatement(insert);
-			st.setString(1, customers.getId());
-			st.setString(2, customers.getNama());
-			st.setString(3, customers.getAlamat());
-			st.setString(4, customers.getHp());
+			st.setString(1, customers.getNama());
+			st.setString(2, customers.getAlamat());
+			st.setString(3, customers.getHp());
 			st.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
@@ -55,6 +54,7 @@ public class CustomersRepo implements CustomersDAO{
 				customers.setNama(rs.getString("name"));
 				customers.setAlamat(rs.getString("Alamat"));
 				customers.setHp(rs.getString("Hp"));
+				ls.add(customers);
 			}
 		}catch(SQLException e) {
 			Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -62,14 +62,15 @@ public class CustomersRepo implements CustomersDAO{
 		return ls;
 	}
 
+	
 	public void update (Customers customers) {
 		PreparedStatement st = null;
 		try {
 			st = connection.prepareStatement(update);
-			st.setString(1,  customers.getNama());;
-			st.setString(2,  customers.getHp());;
-			st.setString(3,  customers.getAlamat());;
-			st.setString(4,  customers.getId());;
+			st.setString(1, customers.getNama());  
+			st.setString(2, customers.getAlamat()); 
+			st.setString(3, customers.getHp());     
+			st.setString(4, customers.getId());     
 			st.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
