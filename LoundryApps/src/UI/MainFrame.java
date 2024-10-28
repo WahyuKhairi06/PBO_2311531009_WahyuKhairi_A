@@ -11,6 +11,8 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainFrame extends JFrame {
 
@@ -53,40 +55,78 @@ public class MainFrame extends JFrame {
 		lblNewLabel.setBounds(42, 22, 385, 50);
 		contentPane.add(lblNewLabel);
 		
-		JButton btnNewButton = new JButton("Pesanan");
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNewButton.setBounds(10, 98, 142, 110);
-		contentPane.add(btnNewButton);
+		JButton btnOrder = new JButton("Pesanan");
+		btnOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				OrderDetailFrame odf = new OrderDetailFrame();
+				odf.setVisible(true);
+				dispose();
+			}		
+		});
+		btnOrder.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnOrder.setBounds(10, 98, 142, 110);
+		contentPane.add(btnOrder);
 		
 		JButton btnService = new JButton("Layanan");
+		btnService.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ServiceFrame service = new ServiceFrame();
+				service.setVisible(true);
+				dispose();
+			}
+		});
 		btnService.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnService.setBounds(162, 98, 142, 110);
 		contentPane.add(btnService);
 		
-		JButton btnNewButton_1_1 = new JButton("Pelanggan");
-		btnNewButton_1_1.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNewButton_1_1.setBounds(314, 98, 142, 110);
-		contentPane.add(btnNewButton_1_1);
+		JButton btnCustomers = new JButton("Pelanggan");
+		btnCustomers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CustomerFrame cts = new CustomerFrame();
+				cts.setVisible(true);
+				dispose();
+				
+			}
+		});
+		btnCustomers.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnCustomers.setBounds(314, 98, 142, 110);
+		contentPane.add(btnCustomers);
 		
 		JButton btnUser = new JButton("Pengguna");
+		btnUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				UserFrame user = new UserFrame();
+				user.setVisible(true);
+				dispose();
+				
+			}
+		});
 		btnUser.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnUser.setBounds(10, 226, 142, 110);
 		contentPane.add(btnUser);
 		
-		JButton btnNewButton_1_2 = new JButton("Laporan");
-		btnNewButton_1_2.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNewButton_1_2.setBounds(162, 226, 142, 110);
-		contentPane.add(btnNewButton_1_2);
+		JButton btnReport = new JButton("Laporan");
+		btnReport.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnReport.setBounds(162, 226, 142, 110);
+		contentPane.add(btnReport);
 		
-		JButton btnNewButton_1_3 = new JButton("Profil");
-		btnNewButton_1_3.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNewButton_1_3.setBounds(314, 226, 142, 110);
-		contentPane.add(btnNewButton_1_3);
+		JButton btnProfil = new JButton("Profil");
+		btnProfil.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnProfil.setBounds(314, 226, 142, 110);
+		contentPane.add(btnProfil);
 		
-		JButton btnNewButton_2 = new JButton("Exit");
-		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNewButton_2.setBounds(10, 347, 446, 39);
-		contentPane.add(btnNewButton_2);
+		JButton btnExit = new JButton("Exit");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LoginFrame login = new LoginFrame ();
+				login.setVisible(true);
+				dispose();
+				
+			}
+		});
+		btnExit.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnExit.setBounds(10, 347, 446, 39);
+		contentPane.add(btnExit);
 	}
 
 }
