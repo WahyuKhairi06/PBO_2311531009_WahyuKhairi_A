@@ -92,17 +92,8 @@ public class OrderDetailFrame extends JFrame {
 	
 	public void loadPelanggan() {
 		String cust;
-//		for (int i = 0; i < tableUsers.getRowCount(); i++) {
-//		    Object value = tableUsers.getValueAt(i, 1); 
-//	
-//            cust = value.toString();
-//            cbPelanggan.addItem(cust); 
-//	        
-//		}
         cust = "Wahyu Khairi";
-        cbPelanggan.addItem(cust);
-//        cbPelanggan.addItem(tableUsers.getValueAt(0,1).toString());
-        
+        cbPelanggan.addItem(cust);  
 	}
 	
 	LocalDate today = LocalDate.now();
@@ -395,6 +386,8 @@ public class OrderDetailFrame extends JFrame {
 				txtJenis.setText(TableOrderDetail.getValueAt(TableOrderDetail.getSelectedRow(),1).toString());
 				txtJumlah.setText(TableOrderDetail.getValueAt(TableOrderDetail.getSelectedRow(),2).toString());
 				txtTotal2.setText(TableOrderDetail.getValueAt(TableOrderDetail.getSelectedRow(),3).toString()+".0");
+				
+			
 			}
 		});
 		TableOrderDetail.setFillsViewportHeight(true);
