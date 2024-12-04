@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import Model.Customers;
-import config.Database;
+import config.DatabaseHelper;
 
 public class CustomersRepo implements CustomersDAO{
 	private Connection connection;
@@ -19,7 +19,7 @@ public class CustomersRepo implements CustomersDAO{
 	final String update = "UPDATE Customers SET name=?, alamat=?, hp=? WHERE id=?;";
 	
 	public CustomersRepo() {
-		connection = Database.koneksi();
+		connection = DatabaseHelper.getConnection();
 	}
 	
 	@Override

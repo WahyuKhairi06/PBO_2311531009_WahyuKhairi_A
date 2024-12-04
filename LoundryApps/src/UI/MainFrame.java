@@ -5,6 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Tugas.Array;
+
 import java.awt.SystemColor;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -40,7 +43,7 @@ public class MainFrame extends JFrame {
 	 */
 	public MainFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 478, 500);
+		setBounds(100, 100, 478, 555);
 		contentPane = new JPanel();
 		contentPane.setBackground(SystemColor.activeCaption);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -125,8 +128,20 @@ public class MainFrame extends JFrame {
 			}
 		});
 		btnExit.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnExit.setBounds(10, 347, 446, 39);
+		btnExit.setBounds(10, 466, 446, 39);
 		contentPane.add(btnExit);
+		
+		JButton btnTugas = new JButton("Tugas");
+		btnTugas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Array arrayframe = new Array();
+				arrayframe.setVisible(true);
+				dispose();
+				
+			}
+		});
+		btnTugas.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnTugas.setBounds(162, 345, 142, 110);
+		contentPane.add(btnTugas);
 	}
-
 }

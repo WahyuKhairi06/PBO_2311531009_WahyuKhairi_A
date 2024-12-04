@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import Model.Service;
-import config.Database;
+import config.DatabaseHelper;
 
 public class ServiceRepo implements ServiceDAO{
 	private Connection connection;
@@ -19,7 +19,7 @@ public class ServiceRepo implements ServiceDAO{
 	final String update = "UPDATE Service SET jenis=?, harga=?, status=?, WHERE id=?;";
 	
 	public ServiceRepo() {
-		connection = Database.koneksi();
+		connection = DatabaseHelper.getConnection();
 	}
 	
 	@Override

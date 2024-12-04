@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import Model.User;
-import config.Database;
+import config.DatabaseHelper;
 
 public class UserRepo implements UserDAO{
 	private Connection connection;
@@ -20,7 +20,7 @@ public class UserRepo implements UserDAO{
 	final String update = "UPDATE user SET name=?, username=?, password=? WHERE id=?;";
 	
 	public UserRepo() {
-		connection = Database.koneksi();
+		connection = DatabaseHelper.getConnection();
 	}
 	
 	@Override
@@ -50,7 +50,7 @@ public class UserRepo implements UserDAO{
 			Statement st = connection.createStatement();
 			ResultSet rs = st.executeQuery(select);
 			while(rs.next()) {
-				User user = new User();
+				User user = new User(" ", " ");
 				user.setId(rs.getString("id"));
 				user.setNama(rs.getString("name"));
 				user.setUsername(rs.getString("username"));

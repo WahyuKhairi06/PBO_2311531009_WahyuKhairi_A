@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import Model.OrderDetail;
-import config.Database;
+import config.DatabaseHelper;
 
 public class OrderDetailRepo implements OrderDetailDAO{
 	private Connection connection;
@@ -19,7 +19,7 @@ public class OrderDetailRepo implements OrderDetailDAO{
 	final String update = "UPDATE orderdetail SET jenis=?, quantity=?, total=? WHERE id=?;";
 	
 	public OrderDetailRepo() {
-		connection = Database.koneksi();
+		connection = DatabaseHelper.getConnection();
 	}
 	
 	@Override
