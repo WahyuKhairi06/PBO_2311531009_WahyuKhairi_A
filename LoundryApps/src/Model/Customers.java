@@ -1,7 +1,19 @@
 package Model;
 
 public class Customers {
-	String id, nama, alamat, hp;
+	private String id;
+	private String nama;
+	private String email;
+	private String alamat;
+	private String hp;
+	
+	public Customers (String id, String nama, String email, String alamat, String hp) {
+		this.id = id;
+		this.nama = nama;
+		this.email = email;
+		this.alamat = alamat;
+		this.hp = hp;
+	}
 
 	public String getId() {
 		return id;
@@ -17,6 +29,14 @@ public class Customers {
 
 	public void setNama(String nama) {
 		this.nama = nama;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getAlamat() {
@@ -35,5 +55,4 @@ public class Customers {
 		this.hp = hp;
 	}
 	
-
 }

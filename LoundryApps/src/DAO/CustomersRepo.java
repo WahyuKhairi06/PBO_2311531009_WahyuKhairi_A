@@ -10,13 +10,14 @@ import java.sql.SQLException;
 import java.util.*;
 import Model.Customers;
 import config.DatabaseHelper;
+import Model.CustomerBuilder;
 
 public class CustomersRepo implements CustomersDAO{
 	private Connection connection;
-	final String insert = "INSERT INTO Customers (name, alamat, hp) VALUES (?,?,?);";
+	final String insert = "INSERT INTO Customers (nama, alamat, hp, email) VALUES (?,?,?,?);";
 	final String select = "SELECT * FROM Customers;";
 	final String delete = "DELETE FROM Customers WHERE id=?;";
-	final String update = "UPDATE Customers SET name=?, alamat=?, hp=? WHERE id=?;";
+	final String update = "UPDATE Customers SET nama=?, alamat=?, hp=?,email=? WHERE id=?;";
 	
 	public CustomersRepo() {
 		connection = DatabaseHelper.getConnection();
@@ -28,10 +29,12 @@ public class CustomersRepo implements CustomersDAO{
 		try {
 			st = connection.prepareStatement(insert);
 			st.setString(1, customers.getNama());
-			st.setString(2, customers.getAlamat());
-			st.setString(3, customers.getHp());
+			st.setString(2, customers.getEmail());
+			st.setString(3, customers.getAlamat());
+			st.setString(4, customers.getHp());
 			st.executeUpdate();
-		}catch(SQLException e) {
+			
+		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
 			try {
@@ -39,27 +42,33 @@ public class CustomersRepo implements CustomersDAO{
 			}catch(SQLException e) {
 				e.printStackTrace();
 			}
+		
+			
 		}
 	}
 	@Override
-	public List<Customers> show(){
-		List<Customers> ls = null;
-		try {
-			ls = new ArrayList<Customers>();
-			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery(select);
-			while(rs.next()) {
-				Customers customers = new Customers();
-				customers.setId(rs.getString("Id"));
-				customers.setNama(rs.getString("name"));
-				customers.setAlamat(rs.getString("Alamat"));
-				customers.setHp(rs.getString("Hp"));
-				ls.add(customers);
-			}
-		}catch(SQLException e) {
-			Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
-		}
-		return ls;
+	public List<Customers> show() {
+	    // TODO Auto-generated method stub
+	    List<Customers> ls = null;
+	    try {
+	        ls = new ArrayList<Customers>();
+	        Statement st = connection.createStatement();
+	        ResultSet rs = st.executeQuery(select);
+	        while (rs.next()) {
+	            Customers cs = new CustomerBuilder()
+	                    .setId(rs.getString("id"))
+	                    .setNama(rs.getString("nama"))
+	                    .setEmail(rs.getString("email"))
+	                    .setAlamat(rs.getString("alamat"))
+	                    .setHp(rs.getString("hp"))
+	                    .build();
+	            		ls.add(cs);
+	        }
+	    } catch (SQLException e) {
+	        // TODO: handle exception
+	        Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, e);
+	    }
+	    return ls;
 	}
 
 	
@@ -69,8 +78,9 @@ public class CustomersRepo implements CustomersDAO{
 			st = connection.prepareStatement(update);
 			st.setString(1, customers.getNama());  
 			st.setString(2, customers.getAlamat()); 
-			st.setString(3, customers.getHp());     
-			st.setString(4, customers.getId());     
+			st.setString(3, customers.getHp());  
+			st.setString(4, customers.getEmail());
+			st.setString(5, customers.getId());     
 			st.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
