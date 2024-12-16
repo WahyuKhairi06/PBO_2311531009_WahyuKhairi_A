@@ -6,100 +6,126 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.toedter.calendar.JDateChooser;
+
 import DAO.OrderDetailRepo;
+import DAO.OrderRepo;
 import DAO.ServiceRepo;
-import DAO.UserRepo;
+import listener.DataListener;
+import Model.Order;
 import Model.OrderDetail;
 import Model.Service;
-import Model.User;
 import Table.TableOrderDetail;
 import Table.TableService;
-import Table.TableUser;
 
-
-import javax.swing.JTable;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
+import javax.swing.JTable;
 import java.awt.Font;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.JButton;
+import java.awt.Color;
+import javax.swing.JScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import javax.swing.JScrollPane;
-import java.awt.Color;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.DefaultComboBoxModel;
 
-public class OrderDetailFrame extends JFrame {
+public class OrderDetailFrame extends JFrame implements DataListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JTextField txtOrderID;
 	private JTextField txtHarga;
 	private JTextField txtJumlah;
-	private JTextField txtJenis;
-	private JTextField txtTotal1;
-	private JTable TableOrderDetail;
-	private JTextField txtTotal2;
-	private JTextField txtOrderID;
-	private JTextField txtTanggal;
-	private JTextField txtTanggalPembelian;
-	private JTable tableService;
-	private JComboBox<String> cbPelanggan;
-
+	private JTextField txtTotal;
+	private JTable tableOrderDetail;
+	JTable tableLayanan;
+	JTextField txtPelanggan;
+	JDateChooser CalTanggal;
+	JDateChooser CalTanggalKembali;
+	JComboBox cbStatus;
+	JComboBox cbPembayaran;
+	JComboBox cbStatusPembayaran;
+	JLabel lblTotal;
 	
-	ServiceRepo srv = new ServiceRepo();
-	List<Service> ls;
-	String id;
+	ServiceRepo sr = new ServiceRepo();
+	List<Service> ls_service;
+	public String id_service;
+	public static String id_pelanggan="";
 	
-	public void loadTable() {
-		ls = srv.show();
-		TableService tu = new TableService(ls);
-		tableService.setModel(tu);;
-		tableService.getTableHeader().setVisible(true);
+	public void loadTableService() {
+		ls_service = sr.show();
+		TableService tu = new TableService(ls_service);
+		tableLayanan.setModel(tu);
+		tableLayanan.getTableHeader().setVisible(true);
 	}
 	
-	private double total (double harga, double quantity) {
-		return harga * quantity;
-	}
-	private double hargabagi (double harga, double quantity) {
-		return harga / quantity;
-	}
-	
-	OrderDetailRepo odf = new OrderDetailRepo();
-	List<OrderDetail> ls_1;
-	
-	public void loadDataOrderDetail() {
-	    ls_1 = odf.show(); // Ambil data dari repo
-	    TableOrderDetail tu = new TableOrderDetail(ls_1); // Pastikan ini menggunakan data yang benar
-	    TableOrderDetail.setModel(tu);
-	    TableOrderDetail.getTableHeader().setVisible(true);
+	public double total(String jumlah) {
+		double result = 0;
+		if(jumlah.isEmpty()) {
+			result = 0;
+		} else {
+			result = Double.parseDouble(jumlah) * Double.parseDouble(txtHarga.getText());
+		}
+		return result;
 	}
 	
-	public void reset () {
+	OrderDetailRepo repo_od = new OrderDetailRepo();
+	List<OrderDetail> ls_od;
+	public String id_order_detail;
+	
+	public void reset() {
 		txtHarga.setText("");
-		txtJenis.setText("");
 		txtJumlah.setText("");
-		txtTotal2.setText("");
-	}
-
-	
-	public void loadPelanggan() {
-		String cust;
-        cust = "Wahyu Khairi";
-        cbPelanggan.addItem(cust);  
+		txtTotal.setText("");
+		id_service=null;
+		id_order_detail=null;
 	}
 	
-	LocalDate today = LocalDate.now();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    String formattedDate = today.format(formatter);
+	public void loadTableDetail() {
+		ls_od = repo_od.show(id_order_detail);
+		TableOrderDetail tu = new TableOrderDetail(ls_od);
+		tableOrderDetail.setModel(tu);
+		tableOrderDetail.getTableHeader().setVisible(true);
+	}
 	
+	public String tgl;
+	public String tgl_kbl;
+	
+	public void setOrderID(String id) {
+		txtOrderID.setText(id);
+	}
+	public void setCustID (String id) {
+		id_pelanggan=id;
+	}
+	public void setPelanggan (String pelanggan) {
+		txtPelanggan.setText(pelanggan);
+	}
+	public void setTanggal(Date date) {
+		CalTanggal.setDate(date);
+	}
+	public void setTanggalKembali(Date date) {
+		CalTanggalKembali.setDate(date);
+	}
+	public void setStatus (String proses) {
+		cbStatus.setSelectedItem(proses);
+	}
+	public void setTotal (String total) {
+		lblTotal.setText(total);
+	}
+	public void setStatusBayar (String status) {
+		cbStatusPembayaran.setSelectedItem(status);
+	}
+	
+	OrderRepo order_repo = new OrderRepo();
 	
 	/**
 	 * Launch the application.
@@ -110,10 +136,8 @@ public class OrderDetailFrame extends JFrame {
 				try {
 					OrderDetailFrame frame = new OrderDetailFrame();
 					frame.setVisible(true);
-					frame.loadTable();
-					frame.loadPelanggan();
-					frame.loadDataOrderDetail();
-					
+					frame.loadTableService();
+					frame.loadTableDetail();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -125,274 +149,365 @@ public class OrderDetailFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public OrderDetailFrame() {
+		
+	    
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 684, 590);
+		setBounds(100, 100, 904, 682);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JPanel panel1 = new JPanel();
-		panel1.setBounds(10, 11, 206, 529);
-		contentPane.add(panel1);
-		panel1.setLayout(null);
+		JPanel order = new JPanel();
+		order.setBackground(new Color(192, 192, 192));
+		order.setBounds(10, 11, 277, 623);
+		contentPane.add(order);
+		order.setLayout(null);
 		
 		JLabel lblOrderID = new JLabel("Order ID");
-		lblOrderID.setBounds(10, 11, 72, 14);
-		panel1.add(lblOrderID);
+		lblOrderID.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblOrderID.setBounds(10, 11, 108, 27);
+		order.add(lblOrderID);
 		
 		txtOrderID = new JTextField();
 		txtOrderID.setEditable(false);
-		txtOrderID.setText("TRX-001");
-		txtOrderID.setBounds(10, 25, 186, 20);
-		panel1.add(txtOrderID);
+		txtOrderID.setFont(new Font("Montserrat", Font.PLAIN, 12));
+		txtOrderID.setBounds(10, 38, 255, 27);
+		order.add(txtOrderID);
 		txtOrderID.setColumns(10);
 		
-		JLabel lblPelanggan = new JLabel("Pelanggan");
-		lblPelanggan.setBounds(10, 52, 65, 20);
-		panel1.add(lblPelanggan);
+		String generatedOrderId = order_repo.generateOrderId();
+	    txtOrderID.setText("TRX-001");
 		
-		cbPelanggan = new JComboBox();
-		cbPelanggan.setModel(new DefaultComboBoxModel(new String[] {"Wahyu Khairi"}));
-		cbPelanggan.setBounds(10, 72, 186, 20);
-		panel1.add(cbPelanggan);
-
+		JLabel lblPelanggan = new JLabel("Pelanggan");
+		lblPelanggan.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblPelanggan.setBounds(10, 76, 108, 27);
+		order.add(lblPelanggan);
 		
 		JLabel lblTanggal = new JLabel("Tanggal");
-		lblTanggal.setBounds(10, 94, 65, 20);
-		panel1.add(lblTanggal);
-		
-		txtTanggal = new JTextField();
-		txtTanggal.setText("28/10/2024");
-		txtTanggal.setColumns(10);
-		txtTanggal.setBounds(10, 113, 186, 20);
-		panel1.add(txtTanggal);
+		lblTanggal.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblTanggal.setBounds(10, 142, 108, 27);
+		order.add(lblTanggal);
 		
 		JLabel lblTanggalPengambilan = new JLabel("Tanggal Pengambilan");
-		lblTanggalPengambilan.setBounds(10, 137, 116, 14);
-		panel1.add(lblTanggalPengambilan);
+		lblTanggalPengambilan.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblTanggalPengambilan.setBounds(10, 208, 197, 27);
+		order.add(lblTanggalPengambilan);
 		
-		txtTanggalPembelian = new JTextField();
-		txtTanggalPembelian.setColumns(10);
-		txtTanggalPembelian.setBounds(10, 154, 186, 20);
-		panel1.add(txtTanggalPembelian);
+		cbStatus = new JComboBox();
+		cbStatus.setModel(new DefaultComboBoxModel(new String[] {"Diproses", "Selesai"}));
+		cbStatus.setFont(new Font("Montserrat", Font.PLAIN, 12));
+		cbStatus.setBounds(10, 302, 257, 27);
+		order.add(cbStatus);
 		
 		JLabel lblStatus = new JLabel("Status");
-		lblStatus.setBounds(10, 185, 116, 14);
-		panel1.add(lblStatus);
+		lblStatus.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblStatus.setBounds(10, 274, 108, 27);
+		order.add(lblStatus);
 		
-		JComboBox cbStatus = new JComboBox();
-		cbStatus.setEditable(true);
-		cbStatus.setModel(new DefaultComboBoxModel(new String[] {"Proses", "Selesai"}));
-		cbStatus.setBounds(10, 201, 186, 22);
-		panel1.add(cbStatus);
+		JLabel lbltulisanTotal = new JLabel("Total");
+		lbltulisanTotal.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lbltulisanTotal.setBounds(12, 340, 108, 27);
+		order.add(lbltulisanTotal);
 		
-		JLabel lblNewLabel = new JLabel("Total");
-		lblNewLabel.setBounds(10, 237, 46, 14);
-		panel1.add(lblNewLabel);
+		lblTotal = new JLabel("");
+		lblTotal.setFont(new Font("Montserrat", Font.PLAIN, 16));
+		lblTotal.setBounds(12, 364, 108, 27);
+		order.add(lblTotal);
 		
 		JLabel lblPembayaran = new JLabel("Pembayaran");
-		lblPembayaran.setBounds(10, 281, 97, 14);
-		panel1.add(lblPembayaran);
+		lblPembayaran.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblPembayaran.setBounds(12, 397, 108, 27);
+		order.add(lblPembayaran);
 		
-		JComboBox cbPembayaran = new JComboBox();
-		cbPembayaran.setModel(new DefaultComboBoxModel(new String[] {"Cash", "Qris", "Debit", "Kredit", "Paylater"}));
-		cbPembayaran.setBounds(10, 299, 186, 22);
-		panel1.add(cbPembayaran);
+		cbPembayaran = new JComboBox();
+		cbPembayaran.setModel(new DefaultComboBoxModel(new String[] {"Tunai", "Transfer", "QRIS"}));
+		cbPembayaran.setFont(new Font("Montserrat", Font.PLAIN, 12));
+		cbPembayaran.setBounds(12, 425, 257, 27);
+		order.add(cbPembayaran);
 		
 		JLabel lblStatusPembayaran = new JLabel("Status Pembayaran");
-		lblStatusPembayaran.setBounds(10, 333, 129, 14);
-		panel1.add(lblStatusPembayaran);
+		lblStatusPembayaran.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblStatusPembayaran.setBounds(10, 463, 164, 27);
+		order.add(lblStatusPembayaran);
 		
-		JComboBox cbStatusPembayran = new JComboBox();
-		cbStatusPembayran.setModel(new DefaultComboBoxModel(new String[] {"Lunas", "Ngutang"}));
-		cbStatusPembayran.setBounds(10, 350, 186, 22);
-		panel1.add(cbStatusPembayran);
+		cbStatusPembayaran = new JComboBox();
+		cbStatusPembayaran.setModel(new DefaultComboBoxModel(new String[] {"Belum Lunas", "Lunas"}));
+		cbStatusPembayaran.setFont(new Font("Montserrat", Font.PLAIN, 12));
+		cbStatusPembayaran.setBounds(10, 491, 257, 27);
+		order.add(cbStatusPembayaran);
 		
 		JButton btnSimpanOrder = new JButton("Simpan");
-		btnSimpanOrder.setBounds(10, 405, 89, 23);
-		panel1.add(btnSimpanOrder);
-		
-		JButton btnBatalOrder = new JButton("Batal");
-		btnBatalOrder.setBounds(107, 405, 89, 23);
-		panel1.add(btnBatalOrder);
-		
-		txtTotal1 = new JTextField();
-		txtTotal1.setEditable(false);
-		txtTotal1.setColumns(10);
-		txtTotal1.setBounds(10, 253, 186, 20);
-		panel1.add(txtTotal1);
-		
-		JPanel panel2 = new JPanel();
-		panel2.setBounds(226, 148, 432, 134);
-		contentPane.add(panel2);
-		panel2.setLayout(null);
-		
-		JLabel lblHarga = new JLabel("Harga/kg");
-		lblHarga.setBounds(10, 11, 62, 14);
-		panel2.add(lblHarga);
-		
-		JLabel lblJumlah = new JLabel("Jumlah");
-		lblJumlah.setBounds(10, 50, 46, 14);
-		panel2.add(lblJumlah);
-		
-		txtHarga = new JTextField();
-		txtHarga.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				txtHarga.setText(tableService.getValueAt(tableService.getSelectedRow(),2).toString());
+		btnSimpanOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				  
+			        if (!id_pelanggan.isEmpty()) {
+			            Order order = new Order();
+			            order.setId(txtOrderID.getText());
+			            order.setId_pelanggan(id_pelanggan);
+			            order.setTanggal(tgl);
+			            order.setTanggal_pengambilan(tgl_kbl);
+			            order.setStatus(cbStatus.getSelectedItem().toString());
+			            order.setStatus_pembayaran(cbStatusPembayaran.getSelectedItem().toString());
+			            order.setPembayaran(cbPembayaran.getSelectedItem().toString());
+			            order.setTotal(lblTotal.getText());
+
+			            // Periksa apakah Order ID sudah ada
+			            boolean isExistingOrder = order_repo.checkOrderExists(txtOrderID.getText());
+
+			            if (isExistingOrder) {
+			                // Jika Order ID sudah ada, lakukan update
+			                order_repo.update(order);
+			                JOptionPane.showMessageDialog(null, "Order berhasil diperbarui");
+			            } else {
+			                // Jika Order ID belum ada, lakukan save
+			                order_repo.save(order);
+			                JOptionPane.showMessageDialog(null, "Order berhasil disimpan");
+			            }
+
+			            // Tutup frame dan buka OrderFrame
+			            OrderFrame orderFrame = new OrderFrame();
+			            orderFrame.setVisible(true);
+			            orderFrame.loadTableOrder();
+			            dispose();
+
+			        } else {
+			            JOptionPane.showMessageDialog(null, "Silahkan pilih Pelanggan terlebih dahulu");
+			        }
+				
 			}
 		});
-		txtHarga.setBounds(10, 25, 210, 20);
-		panel2.add(txtHarga);
+		btnSimpanOrder.setFont(new Font("Montserrat", Font.PLAIN, 11));
+		btnSimpanOrder.setBounds(29, 556, 89, 23);
+		order.add(btnSimpanOrder);
+		
+		JButton btnBatalOrder = new JButton("Batal");
+		btnBatalOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				OrderFrame orderFrame = new OrderFrame();
+	            orderFrame.setVisible(true);
+	            orderFrame.loadTableOrder();
+	            dispose();
+			}
+		});
+		btnBatalOrder.setFont(new Font("Montserrat", Font.PLAIN, 11));
+		btnBatalOrder.setBounds(156, 556, 89, 23);
+		order.add(btnBatalOrder);
+		
+		txtPelanggan = new JTextField();
+		txtPelanggan.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				DialogPelanggan dialog = new DialogPelanggan(OrderDetailFrame.this);
+				dialog.setVisible(true);
+			}
+		});
+		txtPelanggan.setFont(new Font("Montserrat", Font.PLAIN, 12));
+		txtPelanggan.setColumns(10);
+		txtPelanggan.setBounds(10, 114, 255, 27);
+		order.add(txtPelanggan);
+		
+		CalTanggal = new JDateChooser();
+		CalTanggal.getCalendarButton().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		CalTanggal.setBounds(10, 168, 255, 27);
+		order.add(CalTanggal);
+		CalTanggal.getDateEditor().addPropertyChangeListener("date", evt -> {
+		    if (CalTanggal.getDate() != null) {
+		    	SimpleDateFormat sdf_tanggal = new SimpleDateFormat("yyyy-MM-dd");
+		        tgl = sdf_tanggal.format(CalTanggal.getDate());
+		    }
+		});
+		
+		CalTanggalKembali = new JDateChooser();
+		CalTanggalKembali.setBounds(10, 236, 257, 27);
+		order.add(CalTanggalKembali);
+		CalTanggalKembali.getDateEditor().addPropertyChangeListener("date", evt -> {
+		    if (CalTanggalKembali.getDate() != null) {
+		    	SimpleDateFormat sdf_tanggalkembali = new SimpleDateFormat("yyyy-MM-dd");
+		        tgl_kbl = sdf_tanggalkembali.format(CalTanggalKembali.getDate());
+		    }
+		});
+		
+		JPanel layanan = new JPanel();
+		layanan.setBackground(new Color(192, 192, 192));
+		layanan.setBounds(297, 11, 583, 378);
+		contentPane.add(layanan);
+		layanan.setLayout(null);
+		
+		JLabel lblLayanan = new JLabel("Layanan");
+		lblLayanan.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblLayanan.setBounds(10, 0, 108, 27);
+		layanan.add(lblLayanan);
+		
+		JLabel lblHargakg = new JLabel("Harga/Kg");
+		lblHargakg.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblHargakg.setBounds(10, 209, 197, 27);
+		layanan.add(lblHargakg);
+		
+		txtHarga = new JTextField();
+		txtHarga.setFont(new Font("Montserrat", Font.PLAIN, 12));
 		txtHarga.setColumns(10);
+		txtHarga.setBounds(10, 237, 255, 27);
+		layanan.add(txtHarga);
+		
+		JLabel lblJumlah = new JLabel("Jumlah");
+		lblJumlah.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblJumlah.setBounds(10, 270, 197, 27);
+		layanan.add(lblJumlah);
 		
 		txtJumlah = new JTextField();
 		txtJumlah.addKeyListener(new KeyAdapter() {
-		    @Override
-		    public void keyReleased(KeyEvent e) {
-		        try {
-		            if (txtJumlah.getText().isEmpty() || txtHarga.getText().isEmpty()) {
-		                txtTotal2.setText("");
-		                txtTotal1.setText("");
-		            } else {
-		                double harga = Double.parseDouble(txtHarga.getText());
-		                double quantity = Double.parseDouble(txtJumlah.getText());
-		                txtTotal2.setText("" + total(harga, quantity));
-		                txtTotal1.setText("" + total(harga, quantity));
-		            }
-		        } catch (NumberFormatException ex) {
-		            JOptionPane.showMessageDialog(null, "Please enter valid numbers in the Harga and Jumlah fields.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
-		        }
-		    }
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String value_jumlah = txtJumlah.getText().toString();
+				txtTotal.setText(""+total(value_jumlah));
+			}
 		});
-
+		txtJumlah.setFont(new Font("Montserrat", Font.PLAIN, 12));
 		txtJumlah.setColumns(10);
-		txtJumlah.setBounds(10, 65, 210, 20);
-		panel2.add(txtJumlah);
+		txtJumlah.setBounds(10, 298, 255, 27);
+		layanan.add(txtJumlah);
 		
-		JLabel lblTotal = new JLabel("Total");
-		lblTotal.setBounds(229, 50, 46, 14);
-		panel2.add(lblTotal);
+		JLabel lblTotal_1 = new JLabel("Total");
+		lblTotal_1.setFont(new Font("Montserrat", Font.PLAIN, 13));
+		lblTotal_1.setBounds(318, 270, 197, 27);
+		layanan.add(lblTotal_1);
 		
-		txtTotal2 = new JTextField();
-		txtTotal2.setEditable(false);
-		txtTotal2.setColumns(10);
-		txtTotal2.setBounds(230, 65, 192, 20);
-		panel2.add(txtTotal2);
+		txtTotal = new JTextField();
+		txtTotal.setFont(new Font("Montserrat", Font.PLAIN, 12));
+		txtTotal.setColumns(10);
+		txtTotal.setBounds(318, 298, 255, 27);
+		layanan.add(txtTotal);
 		
-		JButton btnSimpan = new JButton("Simpan");
-		btnSimpan.addActionListener(new ActionListener() {
+		JButton btnSimpanDetail = new JButton("Simpan");
+		btnSimpanDetail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				OrderDetail orderdtl = new OrderDetail();
-				orderdtl.setJenis(txtJenis.getText());
-				orderdtl.setQuantity(txtJumlah.getText());
-				orderdtl.setTotal(txtTotal2.getText());
-				reset();
-				odf.save(orderdtl);
-				loadTable();
-				loadDataOrderDetail();
-			}
-		});
-		btnSimpan.setBounds(10, 100, 89, 23);
-		panel2.add(btnSimpan);
-		
-		JButton btnUbah = new JButton("Ubah");
-		btnUbah.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				OrderDetail orderdtl = new OrderDetail();
-				orderdtl.setJenis(txtJenis.getText());
-				orderdtl.setQuantity(txtJumlah.getText());
-				orderdtl.setTotal(txtTotal2.getText());
-				orderdtl.setId(id);
-				odf.update(orderdtl);
-				reset();
-				loadTable();
-				loadDataOrderDetail();
-			}
-		});
-		btnUbah.setBounds(109, 100, 89, 23);
-		panel2.add(btnUbah);
-		
-		JButton btnHapus = new JButton("Hapus");
-		btnHapus.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(id != null) {
-					odf.delete(id);
+				if(id_order_detail == null) {
+					OrderDetail od = new OrderDetail();
+					od.setOrder_id(txtOrderID.getText());
+					od.setService_id(id_service);
+					od.setHarga(txtHarga.getText());
+					od.setJumlah(txtJumlah.getText());
+					od.setTotal(txtTotal.getText());
+					repo_od.save(od);
+					JOptionPane.showMessageDialog(null, "berhasil disimpan");
+					loadTableDetail();
 					reset();
-					loadTable();
-					loadDataOrderDetail();
-				}else {
-					JOptionPane.showMessageDialog(null, "Silahkan pilih data yang akan di hapus");
+					lblTotal.setText(""+repo_od.total(txtOrderID.getText()));	
 				}
 			}
 		});
-		btnHapus.setBounds(208, 100, 89, 23);
-		panel2.add(btnHapus);
+		btnSimpanDetail.setFont(new Font("Montserrat", Font.PLAIN, 11));
+		btnSimpanDetail.setBounds(78, 336, 89, 23);
+		layanan.add(btnSimpanDetail);
 		
-		JButton btnBatal = new JButton("Batal");
-		btnBatal.addActionListener(new ActionListener() {
+		JButton btnUbahDetail = new JButton("Ubah");
+		btnUbahDetail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MainFrame main = new MainFrame();
-				main.setVisible(true);
+				if(id_order_detail != null) {
+					OrderDetail od = new OrderDetail();
+					od.setOrder_id(txtOrderID.getText());
+					od.setService_id(id_service);
+					od.setHarga(txtHarga.getText());
+					od.setJumlah(txtJumlah.getText());
+					od.setTotal(txtTotal.getText());
+					od.setId(id_order_detail);
+					repo_od.update(od);
+					loadTableDetail();
+					reset();
+					lblTotal.setText(""+repo_od.total(txtOrderID.getText()));
+				} else {
+					JOptionPane.showMessageDialog(null, "silahkan pilih order terlebih dahulu");
+				}
+			}
+		});
+		btnUbahDetail.setFont(new Font("Montserrat", Font.PLAIN, 11));
+		btnUbahDetail.setBounds(177, 336, 89, 23);
+		layanan.add(btnUbahDetail);
+		
+		JButton btnHapusDetail = new JButton("Hapus");
+		btnHapusDetail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(id_order_detail != null) {
+					repo_od.delete(id_order_detail);
+					reset();
+					loadTableDetail();
+				} else {
+					JOptionPane.showMessageDialog(null, 
+							"SIlahkan pilih data yang akan dihapus");
+				}
+			}
+		});
+		btnHapusDetail.setFont(new Font("Montserrat", Font.PLAIN, 11));
+		btnHapusDetail.setBounds(276, 336, 89, 23);
+		layanan.add(btnHapusDetail);
+		
+		JButton btnBatalDetail = new JButton("Batal");
+		btnBatalDetail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainFrame mf = new MainFrame();
+				mf.setVisible(true);
 				dispose();
 			}
 		});
-		btnBatal.setBounds(307, 100, 89, 23);
-		panel2.add(btnBatal);
-		
-		JLabel lblJenis = new JLabel("Jenis Layanan");
-		lblJenis.setBounds(229, 11, 105, 14);
-		panel2.add(lblJenis);
-		
-		txtJenis = new JTextField();
-		txtJenis.setEditable(false);
-		txtJenis.setColumns(10);
-		txtJenis.setBounds(230, 25, 192, 20);
-		panel2.add(txtJenis);
-		
-		JLabel lblLayanan = new JLabel("Layanan");
-		lblLayanan.setBounds(230, 7, 74, 14);
-		contentPane.add(lblLayanan);
+		btnBatalDetail.setFont(new Font("Montserrat", Font.PLAIN, 11));
+		btnBatalDetail.setBounds(375, 336, 89, 23);
+		layanan.add(btnBatalDetail);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(226, 20, 432, 113);
-		contentPane.add(scrollPane);
+		scrollPane.setBounds(10, 25, 563, 183);
+		layanan.add(scrollPane);
 		
-		tableService = new JTable();
-		tableService.addMouseListener(new MouseAdapter() {
+		tableLayanan = new JTable();
+		scrollPane.setViewportView(tableLayanan);
+		tableLayanan.setFont(new Font("Montserrat", Font.PLAIN, 11));
+		tableLayanan.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				txtHarga.setText(tableService.getValueAt(tableService.getSelectedRow(),2).toString());
-				txtJenis.setText(tableService.getValueAt(tableService.getSelectedRow(),1).toString());
-				txtJumlah.setText("");
-				txtTotal2.setText("");
+				id_service = tableLayanan.getValueAt(tableLayanan.getSelectedRow(), 0).toString();
+				txtHarga.setText(tableLayanan.getValueAt(tableLayanan.getSelectedRow(), 2).toString());
+				
+				if(!txtJumlah.getText().isEmpty()) {
+					txtTotal.setText(""+total(txtJumlah.getText()));
+				}
 			}
 		});
-		tableService.setFillsViewportHeight(true);
-		scrollPane.setViewportView(tableService);
+		
+		JPanel tabelOrder = new JPanel();
+		tabelOrder.setBounds(297, 400, 583, 234);
+		contentPane.add(tabelOrder);
+		tabelOrder.setLayout(null);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(226, 293, 432, 247);
-		contentPane.add(scrollPane_1);
+		scrollPane_1.setBounds(0, 0, 583, 234);
+		tabelOrder.add(scrollPane_1);
 		
-		TableOrderDetail = new JTable();
-		TableOrderDetail.addMouseListener(new MouseAdapter() {
+		tableOrderDetail = new JTable();
+		scrollPane_1.setViewportView(tableOrderDetail);
+		tableOrderDetail.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				id = TableOrderDetail.getValueAt(TableOrderDetail.getSelectedRow(),0).toString();
-				txtJenis.setText(TableOrderDetail.getValueAt(TableOrderDetail.getSelectedRow(),1).toString());
-				txtJumlah.setText(TableOrderDetail.getValueAt(TableOrderDetail.getSelectedRow(),2).toString());
-				txtTotal2.setText(TableOrderDetail.getValueAt(TableOrderDetail.getSelectedRow(),3).toString()+".0");
-				
-			
+				id_order_detail = tableOrderDetail.getValueAt(tableOrderDetail.getSelectedRow(), 0).toString();
+				txtOrderID.setText(tableOrderDetail.getValueAt(tableOrderDetail.getSelectedRow(), 1).toString());
+				id_service = tableOrderDetail.getValueAt(tableOrderDetail.getSelectedRow(), 2).toString();
+				txtHarga.setText(tableOrderDetail.getValueAt(tableOrderDetail.getSelectedRow(), 3).toString());
+				txtJumlah.setText(tableOrderDetail.getValueAt(tableOrderDetail.getSelectedRow(), 4).toString());
+				txtTotal.setText(tableOrderDetail.getValueAt(tableOrderDetail.getSelectedRow(), 5).toString());
+				lblTotal.setText(tableOrderDetail.getValueAt(tableOrderDetail.getSelectedRow(), 5).toString());
 			}
 		});
-		TableOrderDetail.setFillsViewportHeight(true);
-		TableOrderDetail.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		TableOrderDetail.setBackground(new Color(255, 255, 255));
-		scrollPane_1.setViewportView(TableOrderDetail);
+		tableOrderDetail.setFont(new Font("Montserrat", Font.PLAIN, 11));
+	}
+
+	@Override
+	public void onDataReceived(String id, String nama) {
+		// TODO Auto-generated method stub
+		txtPelanggan.setText(nama);
+		id_pelanggan=id;
+		
 	}
 }

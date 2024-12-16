@@ -5,8 +5,10 @@ import java.util.List;
 import Model.OrderDetail;
 
 public interface OrderDetailDAO {
-	void save(OrderDetail odf);
-	public List<OrderDetail> show();
+	void save(OrderDetail od);
+	public List<OrderDetail> show(String order_id);
 	public void delete(String id);
-	public void update(OrderDetail odf);
+	public void update(OrderDetail od);
+	public String total(String order_id);
+
 }

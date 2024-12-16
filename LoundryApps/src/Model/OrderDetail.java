@@ -1,7 +1,7 @@
 package Model;
 
 public class OrderDetail {
-	String id, jenis, quantity, total;
+	String id, order_id, service_id, harga, jumlah, total;
 
 	public String getId() {
 		return id;
@@ -11,20 +11,36 @@ public class OrderDetail {
 		this.id = id;
 	}
 
-	public String getJenis() {
-		return jenis;
+	public String getOrder_id() {
+		return order_id;
 	}
 
-	public void setJenis(String jenis) {
-		this.jenis = jenis;
+	public void setOrder_id(String order_id) {
+		this.order_id = order_id;
 	}
 
-	public String getQuantity() {
-		return quantity;
+	public String getService_id() {
+		return service_id;
 	}
 
-	public void setQuantity(String quantity) {
-		this.quantity = quantity;
+	public void setService_id(String service_id) {
+		this.service_id = service_id;
+	}
+
+	public String getHarga() {
+		return harga;
+	}
+
+	public void setHarga(String harga) {
+		this.harga = harga;
+	}
+
+	public String getJumlah() {
+		return jumlah;
+	}
+
+	public void setJumlah(String jumlah) {
+		this.jumlah = jumlah;
 	}
 
 	public String getTotal() {
@@ -34,4 +50,5 @@ public class OrderDetail {
 	public void setTotal(String total) {
 		this.total = total;
 	}
+
 }

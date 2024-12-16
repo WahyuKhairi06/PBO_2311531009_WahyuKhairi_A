@@ -1,21 +1,24 @@
 package Table;
 
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
-import Model.OrderDetail;
 
-public class TableOrderDetail extends AbstractTableModel {
-	List<OrderDetail> ls;
-	private String[] columnNames = {"ID", "Order ID", "Service ID", "Harga", "Jumlah", "Total"};
-	public TableOrderDetail(List<OrderDetail> ls) {
+import javax.swing.table.AbstractTableModel;
+
+import Model.Order;
+
+public class TableOrder extends AbstractTableModel{
+	List<Order> ls;
+	private String[] columnNames = {"Order ID", "ID Pelanggan", "Tanggal", "Status", "Status Pembayaran", "Total"};
+	public TableOrder(List<Order> ls) {
 		this.ls = ls;
 	}
-	
+
 	@Override
 	public int getRowCount() {
 		// TODO Auto-generated method stub
 		return ls.size();
 	}
+
 	@Override
 	public int getColumnCount() {
 		// TODO Auto-generated method stub
@@ -25,7 +28,7 @@ public class TableOrderDetail extends AbstractTableModel {
 	public String getColumnName(int column) {
 		return columnNames[column];
 	}
-	
+
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
@@ -33,18 +36,18 @@ public class TableOrderDetail extends AbstractTableModel {
 		case 0:
 			return ls.get(rowIndex).getId();
 		case 1:
-			return ls.get(rowIndex).getOrder_id();
+			return ls.get(rowIndex).getId_pelanggan();
 		case 2:
-			return ls.get(rowIndex).getService_id();
+			return ls.get(rowIndex).getTanggal();
 		case 3:
-			return ls.get(rowIndex).getHarga();
+			return ls.get(rowIndex).getStatus();
 		case 4:
-			return ls.get(rowIndex).getJumlah();
+			return ls.get(rowIndex).getStatus_pembayaran();
 		case 5:
 			return ls.get(rowIndex).getTotal();
 		default:
 			return null;
 		}
-		
 	}
+
 }
