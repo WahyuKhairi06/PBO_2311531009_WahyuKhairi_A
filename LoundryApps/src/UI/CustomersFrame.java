@@ -154,15 +154,15 @@ public class CustomersFrame extends JFrame {
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Customers customers = new Customers("","","","","");
-				customers.setNama(txtName.getText());
-				customers.setAlamat(txtAddress.getText());
-				customers.setHp(txtHp.getText());
-				customers.setEmail(txtEmail.getText());
-				customers.setId(id);
-				cs.update(customers);
-				reset();
-				loadTable();
+			    Customers customer = new CustomerBuilder()
+			            .setNama(txtName.getText())
+			            .setAlamat(txtAddress.getText())
+			            .setHp(txtHp.getText())
+			            .setEmail(txtEmail.getText())
+			            .build();
+			    cs.save(customer);
+			    reset();
+			    loadTable();
 			}
 		});
 		btnUpdate.setBackground(new Color(0, 128, 255));
