@@ -13,10 +13,10 @@ import config.Database;
 
 public class CustomersRepo implements CustomersDAO{
 	private Connection connection;
-	final String insert = "INSERT INTO Customers (name, alamat, hp) VALUES (?,?,?);";
+	final String insert = "INSERT INTO Customers (nama, alamat, hp) VALUES (?,?,?);";
 	final String select = "SELECT * FROM Customers;";
 	final String delete = "DELETE FROM Customers WHERE id=?;";
-	final String update = "UPDATE Customers SET name=?, alamat=?, hp=? WHERE id=?;";
+	final String update = "UPDATE Customers SET nama=?, alamat=?, hp=? WHERE id=?;";
 	
 	public CustomersRepo() {
 		connection = Database.koneksi();
@@ -51,7 +51,7 @@ public class CustomersRepo implements CustomersDAO{
 			while(rs.next()) {
 				Customers customers = new Customers();
 				customers.setId(rs.getString("Id"));
-				customers.setNama(rs.getString("name"));
+				customers.setNama(rs.getString("nama"));
 				customers.setAlamat(rs.getString("Alamat"));
 				customers.setHp(rs.getString("Hp"));
 				ls.add(customers);

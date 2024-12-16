@@ -1,4 +1,4 @@
-	package Model;
+package Model;
 
 public class Order {
 	String id, id_pelanggan, tanggal, tanggal_pengambilan, status, pembayaran, status_pembayaran, total;
